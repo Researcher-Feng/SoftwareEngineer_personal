@@ -12,7 +12,7 @@ def my_lcs(string, sub):
     if len(string) < len(sub):
         sub, string = string, sub
 
-    lengths = [[0 for i in range(0, len(sub) + 1)] for j in range(0, len(string) + 1)]
+    lengths = [[0] * (len(sub) + 1) for _ in range(len(string) + 1)]
 
     for j in range(1, len(sub) + 1):
         for i in range(1, len(string) + 1):
@@ -24,13 +24,12 @@ def my_lcs(string, sub):
     return lengths[len(string)][len(sub)]
 
 
-class Rouge():
-    '''
+class Rouge:
+    """
     Class for computing ROUGE-L score for a set of candidate sentences for the MS COCO test set
-    '''
+    """
 
     def __init__(self):
-        # vrama91: updated the value below based on discussion with Hovey
         self.beta = 1.2
 
     def calc_score(self, candidate, refs):
@@ -77,9 +76,9 @@ class Rouge():
         imgIds = list(gts.keys())
 
         score = dict()
-        for id in imgIds:
-            hypo = res[id]
-            ref = gts[id]
+        for id_i in imgIds:
+            hypo = res[id_i]
+            ref = gts[id_i]
 
             # Sanity check.
             assert (type(hypo) is list)
@@ -87,10 +86,11 @@ class Rouge():
             assert (type(ref) is list)
             assert (len(ref) > 0)
 
-            score[id] = self.calc_score(hypo, ref)
+            score[id_i] = self.calc_score(hypo, ref)
 
         average_score = np.mean(np.array(list(score.values())))
         return average_score, score
 
-    def method(self):
+    @staticmethod
+    def method():
         return "Rouge"

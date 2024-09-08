@@ -1,4 +1,4 @@
-from get_tokenize import txt_loader, split_txt, get_vocab, generate_vocab, index_token, generate_string
+from get_tokenize import *
 from google_bleu import corpus_bleu
 from rouge import Rouge
 import Levenshtein
@@ -41,7 +41,7 @@ def main_process(file_raw, file_new):
     vo, token_new_list = get_vocab(token_new, vo)
     vocab_index = generate_vocab(vo)
     vocab_len = len(vocab_index)
-    print('vocab size: ', vocab_len)
+    print('词汇表大小: ', vocab_len)
     t_index_raw = index_token(token_raw_list, vocab_index)
     t_index_new = index_token(token_new_list, vocab_index)
     string_raw = generate_string(t_index_raw)
@@ -51,7 +51,7 @@ def main_process(file_raw, file_new):
         l_similarity = levenshtein_similarity(string_raw, string_new)
         print(f'相似度：{l_similarity}')
     else:
-        print('文本较长，采用bleu和rouge_l方法计算相似度')
+        print('文本较短，采用bleu和rouge_l方法计算相似度')
         t_dict_raw = {0:[string_raw]}
         t_dict_new = {0:[string_new]}
         bleu, rouge_l = eval_accuracies(t_dict_raw, t_dict_new)
@@ -60,7 +60,9 @@ def main_process(file_raw, file_new):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--raw_file', type=str, default=r'D:\我的文档\Desktop\学校\软件工程\作业\2\orig.txt')
-    parser.add_argument('--compare_file', type=str, default=r'D:\我的文档\Desktop\学校\软件工程\作业\2\orig_0.8_add.txt')
+    # parser.add_argument('--raw_file', type=str, default=r'D:\我的文档\Desktop\学校\软件工程\作业\2\orig.txt')
+    # parser.add_argument('--compare_file', type=str, default=r'D:\我的文档\Desktop\学校\软件工程\作业\2\orig_0.8_add.txt')
+    parser.add_argument('--raw_file', type=str, default=r'D:\我的文档\Desktop\学校\软件工程\作业\2\test\demo_orig.txt')
+    parser.add_argument('--compare_file', type=str, default=r'D:\我的文档\Desktop\学校\软件工程\作业\2\test\demo_orig_0.8.txt')
     args = parser.parse_args()
     main_process(args.raw_file, args.compare_file)

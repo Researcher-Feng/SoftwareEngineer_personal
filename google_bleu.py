@@ -6,7 +6,7 @@ def _get_ngrams(segment, max_order):
     """Extracts all n-grams upto a given maximum order from an input segment.
     Args:
       segment: text segment from which n-grams will be extracted.
-      max_order: maximum length in tokens of the n-grams returned by this
+      max_order: maximum length in tokens of the n-grams returned by these
           methods.
     Returns:
       The Counter containing all n-grams upto max_order in segment
@@ -29,7 +29,7 @@ def compute_bleu(reference_corpus, translation_corpus, max_order=4,
       translation_corpus: list of translations to score. Each translation
           should be tokenized into a list of tokens.
       max_order: Maximum n-gram order to use when computing BLEU score.
-      smooth: Whether or not to apply Lin et al. 2004 smoothing.
+      smooth: Whether to apply Lin et al. 2004 smoothing.
     Returns:
       3-Tuple with the BLEU score, n-gram precisions, geometric mean of n-gram
       precisions and brevity penalty.
@@ -82,7 +82,7 @@ def compute_bleu(reference_corpus, translation_corpus, max_order=4,
 
     bleu = geo_mean * bp
 
-    return (bleu, precisions, bp, ratio, translation_length, reference_length)
+    return bleu, precisions, bp, ratio, translation_length, reference_length
 
 
 def corpus_bleu(hypotheses, references):
@@ -95,17 +95,17 @@ def corpus_bleu(hypotheses, references):
     Ids = list(hypotheses.keys())
     ind_score = dict()
 
-    for id in Ids:
-        hyp = hypotheses[id][0].split()
-        ref = [r.split() for r in references[id]]
+    for id_i in Ids:
+        hyp = hypotheses[id_i][0].split()
+        ref = [r.split() for r in references[id_i]]
         hyps.append(hyp)
         refs.append(ref)
 
         score = compute_bleu([ref], [hyp], smooth=True)[0]
         total_score += score
         count += 1
-        ind_score[id] = score
+        ind_score[id_i] = score
 
     avg_score = total_score / count
-    corpus_bleu = compute_bleu(refs, hyps, smooth=True)[0]
-    return corpus_bleu, avg_score, ind_score
+    re_corpus_bleu = compute_bleu(refs, hyps, smooth=True)[0]
+    return re_corpus_bleu, avg_score, ind_score
