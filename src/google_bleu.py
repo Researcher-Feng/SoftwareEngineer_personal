@@ -8,7 +8,7 @@ def _get_ngrams(segment, max_order):
     ngram_counts = collections.Counter()
     # 遍历给定的句子，从order=1到order=max_order
     for order in range(1, max_order + 1):
-        # 遍历句子的长度为in的n-gram
+        # 遍历句子的长度为i的n-gram
         for i in range(0, len(segment) - order + 1):
             # 取出n-gram
             ngram = tuple(segment[i:i + order])
@@ -95,36 +95,48 @@ def compute_bleu(reference_corpus, translation_corpus, max_order=4,
 
 # 计算一个语料库（corpus）的 BLEU 得分
 def corpus_bleu(hypotheses, references):
-    # 定义一个空列表，用于存储参考文献（references）
-    refs = []
-    # 定义一个空列表，用于存储假设文献（hypotheses）
-    hyps = []
-    # 定义一个计数器，用于统计计算的句子数量
-    count = 0
-    # 遍历所有句子的 ID，并将它们添加到列表中
-    total_score = 0.0
+    try:
+        assert (sorted(hypotheses.keys()) == sorted(references.keys())), '输入数据不对齐'
 
-    assert (sorted(hypotheses.keys()) == sorted(references.keys()))
-    Ids = list(hypotheses.keys())
-    # 遍历所有句子
-    ind_score = dict()
+        # 定义一个空列表，用于存储参考文献（references）
+        refs = []
+        # 定义一个空列表，用于存储假设文献（hypotheses）
+        hyps = []
+        # 定义一个计数器，用于统计计算的句子数量
+        count = 0
+        # 遍历所有句子的 ID，并将它们添加到列表中
+        total_score = 0.0
 
-    for id_i in Ids:
-        # 将句子的假设文献和参考文献添加到列表中
-        hyp = hypotheses[id_i][0].split()
-        ref = [r.split() for r in references[id_i]]
-        hyps.append(hyp)
-        refs.append(ref)
 
-        # 计算每个句子的 BLEU 得分
-        score = compute_bleu([ref], [hyp], smooth=True)[0]
-        # 累加所有句子的得分
-        total_score += score
-        # 增加句子数量
-        count += 1
-        ind_score[id_i] = score
+        Ids = list(hypotheses.keys())
+        # 遍历所有句子
+        ind_score = dict()
 
-    # 计算语料库的平均 BLEU 得分和每个句子的得分
-    avg_score = total_score / count
-    re_corpus_bleu = compute_bleu(refs, hyps, smooth=True)[0]
-    return re_corpus_bleu, avg_score, ind_score
+        for id_i in Ids:
+            # 将句子的假设文献和参考文献添加到列表中
+            hyp = hypotheses[id_i][0].split()
+            ref = [r.split() for r in references[id_i]]
+            hyps.append(hyp)
+            refs.append(ref)
+
+            # 计算每个句子的 BLEU 得分
+            score = compute_bleu([ref], [hyp], smooth=True)[0]
+            # 累加所有句子的得分
+            total_score += score
+            # 增加句子数量
+            count += 1
+            ind_score[id_i] = score
+
+        # 计算语料库的平均 BLEU 得分和每个句子的得分
+        avg_score = total_score / count
+        re_corpus_bleu = compute_bleu(refs, hyps, smooth=True)[0]
+        return re_corpus_bleu, avg_score, ind_score
+    except AttributeError:
+        print("请输入字典类型的数据")
+        raise AttributeError
+    except ZeroDivisionError:
+        print("输入不能为空")
+        raise ZeroDivisionError
+    except AssertionError:
+        print('请输入对齐的数据')
+        raise AssertionError

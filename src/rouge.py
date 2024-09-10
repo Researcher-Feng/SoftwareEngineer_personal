@@ -63,34 +63,41 @@ class Rouge:
 
     # 计算评估结果的得分
     def compute_score(self, gts, res):
-        # 首先，我们需要确保输入的结果和标准答案是有序的，如果不然就会出错
-        assert (sorted(gts.keys()) == sorted(res.keys()))
-        # 然后，我们需要获取所有的图片ID
-        imgIds = list(gts.keys())
+        try:
+            if len(gts) == 0 or len(gts) == 0:
+                print("空，返回 -1")
+                return -1
+            # 首先，我们需要确保输入的结果和标准答案是有序的，如果不然就会出错
+            assert (sorted(gts.keys()) == sorted(res.keys()))
+            # 然后，我们需要获取所有的图片ID
+            imgIds = list(gts.keys())
 
-        # 接下来，我们开始遍历所有的图片，并计算它们的得分
-        score = dict()
-        for id_i in imgIds:
-            # 首先，我们从结果中获取当前图片的预测结果
-            hypo = res[id_i]
-            # 然后，我们从标准答案中获取当前图片的真实答案
-            ref = gts[id_i]
+            # 接下来，我们开始遍历所有的图片，并计算它们的得分
+            score = dict()
+            for id_i in imgIds:
+                # 首先，我们从结果中获取当前图片的预测结果
+                hypo = res[id_i]
+                # 然后，我们从标准答案中获取当前图片的真实答案
+                ref = gts[id_i]
 
-            # Sanity check.
-            # 首先，我们需要进行一个基本的sanity check，确保预测结果和标准答案的类型是正确的
-            assert (type(hypo) is list)
-            assert (len(hypo) == 1)
-            assert (type(ref) is list)
-            # 然后，我们需要确保预测结果和标准答案的长度是相同的
-            assert (len(ref) > 0)
+                # Sanity check.
+                # 首先，我们需要进行一个基本的sanity check，确保预测结果和标准答案的类型是正确的
+                assert (type(hypo) is list)
+                assert (len(hypo) == 1)
+                assert (type(ref) is list)
+                # 然后，我们需要确保预测结果和标准答案的长度是相同的
+                assert (len(ref) > 0)
 
-            # 接下来，我们需要定义一个计算函数，它接受预测结果和标准答案，并返回得分
-            score[id_i] = self.calc_score(hypo, ref)
+                # 接下来，我们需要定义一个计算函数，它接受预测结果和标准答案，并返回得分
+                score[id_i] = self.calc_score(hypo, ref)
 
-        # 接下来，我们定义一个计算平均得分的函数
-        average_score = np.mean(np.array(list(score.values())))
-        # 最后，我们返回平均得分和评估结果
-        return average_score, score
+            # 接下来，我们定义一个计算平均得分的函数
+            average_score = np.mean(np.array(list(score.values())))
+            # 最后，我们返回平均得分和评估结果
+            return average_score, score
+        except AssertionError:
+            print("键不匹配，无法比较相似度，返回 -1")
+            return -1
 
     @staticmethod
     def method():

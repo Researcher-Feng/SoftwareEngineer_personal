@@ -36,13 +36,17 @@ def get_vocab(token_list, vo):
 
 # 生成词表（vocabulary）
 def generate_vocab(vocab_current):
-    # 创建一个空的词索引（vocabulary index）字典
-    vocab_index = {'UNK':-1}
-    # 遍历现有的词频最高的列表，并将每个词添加到词索引字典中
-    for i, item in enumerate(vocab_current.most_common()):
-        vocab_index[item[0]] = i
-    # 返回生成的词索引字典
-    return vocab_index
+    try:
+        # 创建一个空的词索引（vocabulary index）字典
+        vocab_index = {'UNK':-1}
+        # 遍历现有的词频最高的列表，并将每个词添加到词索引字典中
+        for i, item in enumerate(vocab_current.most_common()):
+            vocab_index[item[0]] = i
+        # 返回生成的词索引字典
+        return vocab_index
+    except AttributeError:
+        print("请输入正确的数据类型")
+        raise AttributeError
 
 
 # 将文本序列中的词转换为数字序列
@@ -55,8 +59,12 @@ def index_token(token_list, vocab_index):
 
 # 这是一个生成字符串的函数，其输入是一个列表（token_list）。下面是加上注释后的代码：
 def generate_string(token_list):
-    # 使用 join 函数将列表中的元素连接成一个字符串，并返回
-    return ' '.join([str(i) for i in token_list])
+    try:
+        # 使用 join 函数将列表中的元素连接成一个字符串，并返回
+        return ' '.join([str(i) for i in token_list])
+    except TypeError:
+        print("请输入列表类型的数据")
+        raise TypeError
 
 
 
